@@ -16,4 +16,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2d5febd382d5ea94eacd7abfa4cd47cd, type: 2}
   - {fileID: 11400000, guid: 2edf03687649f854790ca3cb246dc2be, type: 2}
   - {fileID: 11400000, guid: 7e3d4ddd95d53b54882f28a3f6c98c73, type: 2}
-  noiseThreshold: 0.3
+  noiseThreshold: 0.5

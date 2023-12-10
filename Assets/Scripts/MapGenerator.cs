@@ -11,6 +11,8 @@ public class MapGenerator : MonoBehaviour
     public int width = 10;
     public int height = 10;
 
+    public float noiseScale = 0.1f;
+
     public Tilemap tilemap;
 
     void Start()
@@ -20,8 +22,6 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        float noiseScale = 0.1f; // Adjust this value to change the 'smoothness' of the grouping
-
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -50,13 +50,20 @@ public class MapGenerator : MonoBehaviour
 
     private TileType ChooseTileType(float noiseValue)
     {
-        foreach (var tileType in tileTypes)
+        // Sort the tile types by noise threshold
+        var sortedTileTypes = tileTypes.OrderBy(t => t.noiseThreshold).ToList();
+
+        foreach (var tileType in sortedTileTypes)
         {
             if (noiseValue <= tileType.noiseThreshold)
+            {
+                Debug.Log("Chosen Tile Type: " + tileType.name);
                 return tileType;
+            }
         }
 
-        return tileTypes.Last(); // Fallback in case no type matches
+        // Random fallback if no threshold is met
+        return sortedTileTypes[Random.Range(0, sortedTileTypes.Count)];
     }
 
     private ObjectType ChooseObjectType()

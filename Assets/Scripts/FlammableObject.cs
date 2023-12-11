@@ -4,7 +4,7 @@ using System.Collections;
 public class FlammableObject : MonoBehaviour
 {
     private bool isBurning = false;
-    private float burnDuration = 20f;
+    public float burnDuration = 20f;
     
 
     void OnCollisionEnter2D(Collision2D collision)

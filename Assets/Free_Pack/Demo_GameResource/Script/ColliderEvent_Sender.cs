@@ -15,8 +15,10 @@ public class ColliderEvent_Sender : MonoBehaviour {
         if (m_parent.Once_Attack)
             return;
 
-        other.GetComponent<WoodDoll_Mgr>().Sword_Hitted();
-        Debug.Log("hit::" + other.name);
+        if (other.GetComponent<WoodDoll_Mgr>() != null)
+        {
+            other.GetComponent<WoodDoll_Mgr>().Sword_Hitted();
+        }
 
         if (this.GetComponent<BoxCollider2D>().enabled)
         {

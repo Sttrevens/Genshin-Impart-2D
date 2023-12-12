@@ -11,6 +11,13 @@ TagManager:
   - LampPhotoCollage
   - NPC
   - Fire
+  - Water
+  - Cold
+  - Ice
+  - Grass
+  - Ground
+  - FxTemporaire
+  - Flame
   layers:
   - Default
   - TransparentFX

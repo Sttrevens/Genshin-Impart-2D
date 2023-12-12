@@ -135,7 +135,7 @@ public class CharacterController_2D : MonoBehaviour {
         if (Input.GetKey(KeyCode.A))
         {
           //  Debug.Log("Left");
-            m_rigidbody.AddForce(Vector2.left * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.left * MoveSpeed * Time.deltaTime);
             if (B_FacingRight)
                 Filp();
 
@@ -144,7 +144,7 @@ public class CharacterController_2D : MonoBehaviour {
         else if (Input.GetKey(KeyCode.D))
         {
           //  Debug.Log("Right");
-            m_rigidbody.AddForce(Vector2.right * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.right * MoveSpeed * Time.deltaTime);
             if (!B_FacingRight)
                 Filp();
         }
@@ -152,13 +152,13 @@ public class CharacterController_2D : MonoBehaviour {
         if (Input.GetKey(KeyCode.W))
         {
            // Debug.Log("up");
-            m_rigidbody.AddForce(Vector2.up * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.up * MoveSpeed * Time.deltaTime);
           
         }
         else if (Input.GetKey(KeyCode.S))
         {
            // Debug.Log("Down");
-            m_rigidbody.AddForce(Vector2.down * MoveSpeed);
+            m_rigidbody.AddForce(Vector2.down * MoveSpeed * Time.deltaTime);
           
             
         }

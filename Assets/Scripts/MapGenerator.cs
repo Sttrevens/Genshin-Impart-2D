@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -11,12 +10,14 @@ public class MapGenerator : MonoBehaviour
     public int width = 10;
     public int height = 10;
 
+    public float environmentItemPossibility = 0.01f;
     public float noiseScale = 0.1f;
 
-    public Tilemap tilemap;
+    public List<GameObject> tiles; // Replace Tilemap with List of GameObjects
 
     void Start()
     {
+        tiles = new List<GameObject>();
         GenerateMap();
     }
 
@@ -31,11 +32,11 @@ public class MapGenerator : MonoBehaviour
                 CreateTile(tileType, x, y);
 
                 // Optionally generate objects
-                /*if (ShouldPlaceObject())
+                if (ShouldPlaceObject())
                 {
-                    ObjectType objectType = ChooseObjectType();
-                    PlaceObject(objectType, x, y);
-                }*/
+                  ObjectType objectType = ChooseObjectType();
+                  PlaceObject(objectType, x, y);
+                }
             }
         }
     }
@@ -43,10 +44,8 @@ public class MapGenerator : MonoBehaviour
     private bool ShouldPlaceObject()
     {
         // Example: 20% chance to place an object
-        return Random.value < 0.2f;
+        return Random.value < environmentItemPossibility;
     }
-
-
 
     private TileType ChooseTileType(float noiseValue)
     {
@@ -84,9 +83,28 @@ public class MapGenerator : MonoBehaviour
 
     private void CreateTile(TileType tileType, int x, int y)
     {
-        Tile chosenTile = tileType.tileAssets[Random.Range(0, tileType.tileAssets.Length)];
+        GameObject chosenPrefab = tileType.tilePrefab;
+        if (chosenPrefab != null)
+        {
+            SpriteRenderer spriteRenderer = chosenPrefab.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = tileType.tileAssets[Random.Range(0, tileType.tileAssets.Length)];
+            }
+            else
+            {
+                Debug.LogError("Prefab does not have a SpriteRenderer component.");
+            }
+        }
+        else
+        {
+            Debug.LogError("chosenPrefab is null.");
+        }
         Vector3Int tilePosition = new Vector3Int(x - width / 2, y - height / 2, 0);
-        tilemap.SetTile(tilePosition, chosenTile);
+
+        GameObject tileObject = Instantiate(chosenPrefab, tilePosition, Quaternion.identity);
+        tileObject.transform.parent = transform;
+        tiles.Add(tileObject);
     }
 
     private void PlaceObject(ObjectType objectType, int x, int y)
@@ -94,7 +112,17 @@ public class MapGenerator : MonoBehaviour
         // Instantiate a prefab from the objectType's prefab array
         GameObject chosenPrefab = objectType.objectPrefabs[Random.Range(0, objectType.objectPrefabs.Length)];
 
-        // Place the object at position x, y
-        // Implementation depends on your game setup
+        // Retrieve the corresponding tile object from the list
+        GameObject tileObject = tiles[x * height + y];
+
+        // Calculate world position for the new object
+        Vector3 worldPosition = tileObject.transform.position;
+
+        // Place the object as a child of the tile object
+        GameObject objectInstance = Instantiate(chosenPrefab, worldPosition, Quaternion.identity);
+        objectInstance.transform.parent = tileObject.transform;
+
+        // Optionally, adjust local position if needed
+        // objectInstance.transform.localPosition = Vector3.zero; or any other offset
     }
 }

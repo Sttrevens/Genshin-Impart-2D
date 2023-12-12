@@ -36,7 +36,7 @@ public class CharacterController_2D : MonoBehaviour {
 	void Update () {
 
 
-        spriteOrder_Controller();
+        //spriteOrder_Controller();
 
 
         if (Input.GetKeyDown(KeyCode.Mouse0))

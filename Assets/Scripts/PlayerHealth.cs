@@ -12,17 +12,13 @@ public class PlayerHealth : MonoBehaviour
 
     public string mainGameScene;
 
-    private void Start()
+    public ParticleSystem[] bloodEffects;
+    public GameObject drunkEffect;
+
+     private void Start()
     {
         currentHealth = maxHealth;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ReloadScene();
-        }
+        UpdateBloodEffectColor();
     }
 
     public void TakeDamage(int damage)
@@ -30,12 +26,9 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        // Inform any subscribers that health has changed.
         onHealthChanged?.Invoke(currentHealth);
+        UpdateBloodEffectColor();
 
-        Debug.Log("Your Health: " + currentHealth);
-
-        // If the player's health drops to zero or below, the player dies.
         if (currentHealth <= 0)
         {
             ReloadScene();
@@ -47,8 +40,30 @@ public class PlayerHealth : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        // Inform any subscribers that health has changed.
         onHealthChanged?.Invoke(currentHealth);
+        UpdateBloodEffectColor();
+    }
+
+    void UpdateBloodEffectColor()
+    {
+        float healthRatio = (float)currentHealth / maxHealth;
+        if (bloodEffects.Length > 0)
+        {
+            foreach (ParticleSystem bloodEffect in bloodEffects)
+            {
+            var mainModule = bloodEffect.main;
+
+            Color startColor1 = new Color(1, 1, 1, 1.0f - healthRatio * 2);
+        Color startColor2 = new Color(1, 1, 1, 1.0f - healthRatio);
+
+        mainModule.startColor = new ParticleSystem.MinMaxGradient(startColor1, startColor2);
+            }
+        }
+        if (drunkEffect != null)
+        {
+            SpriteRenderer spriteRenderer = drunkEffect.GetComponent<SpriteRenderer>();
+            spriteRenderer.color = new Color(1, 1, 1, 1.0f - healthRatio);
+        }
     }
 
     public void ReloadScene()

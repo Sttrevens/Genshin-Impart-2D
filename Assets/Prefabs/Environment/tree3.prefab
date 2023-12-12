@@ -87,7 +87,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!114 &2378743760150777300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,7 +188,7 @@ Transform:
   m_GameObject: {fileID: 5044598982180974875}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.05, y: -0.24000001, z: 0}
+  m_LocalPosition: {x: -0.05, y: -0.04, z: 0}
   m_LocalScale: {x: 3.54822, y: 3.54822, z: 2.36548}
   m_ConstrainProportionsScale: 0
   m_Children: []

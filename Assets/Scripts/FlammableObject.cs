@@ -17,6 +17,7 @@ public class FlammableObject : MonoBehaviour
     private bool isWet = false;
     private bool isFrozen = false;
     private bool isBurning = false;
+    private string objectTag;
 
     void Start()
     {
@@ -92,6 +93,10 @@ public class FlammableObject : MonoBehaviour
 
     void GetWet()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
         if (!isFrozen)
         {
             isWet = true;
@@ -108,11 +113,15 @@ public class FlammableObject : MonoBehaviour
             Destroy(fireEffectInstance);
         }
         isBurning = false;
-        GetWet();
+        gameObject.tag = objectTag;
     }
 
     void GetFrozen()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
         isFrozen = true;
         spriteRenderer.color = Color.blue;
         StartCoroutine(MeltIce(frozenDuration));
@@ -131,6 +140,7 @@ public class FlammableObject : MonoBehaviour
         }
 
         isBurning = true;
+        objectTag = gameObject.tag;
         gameObject.tag = "Fire";
 
         // Instantiate the fire prefab at this GameObject's position
@@ -148,7 +158,7 @@ public class FlammableObject : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         isBurning = false;
-        gameObject.tag = "Ground"; // Reset the tag
+        gameObject.tag = objectTag;
 
         // Destroy the fire effect instance
         if (fireEffectInstance != null)
@@ -169,9 +179,25 @@ public class FlammableObject : MonoBehaviour
 
     IEnumerator ResetAfterDuration(float duration)
     {
+        StartCoroutine(FadeToWhite(spriteRenderer, duration));
         yield return new WaitForSeconds(duration);
         isWet = false;
-        spriteRenderer.color = Color.white; // Reset to original color
+    }
+
+    IEnumerator FadeToWhite(SpriteRenderer spriteRenderer, float duration)
+    {
+        Color startColor = spriteRenderer.color;
+        Color endColor = Color.white;
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            spriteRenderer.color = Color.Lerp(startColor, endColor, elapsedTime / duration);
+            yield return null;
+        }
+
+        spriteRenderer.color = endColor;
     }
 
     IEnumerator MeltIce(float duration)

@@ -113,6 +113,7 @@ MonoBehaviour:
   wetDuration: 10
   firePrefab: {fileID: 8764043878647920493, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
   frozenDuration: 5
+  waterSurface: {fileID: 8659944129095890745, guid: 23b33a77525e32645845df93347ecd74, type: 3}
 --- !u!61 &4185768879051479283
 BoxCollider2D:
   m_ObjectHideFlags: 0

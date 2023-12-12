@@ -21,6 +21,9 @@ public class GroundCollider : MonoBehaviour
     private bool isFrozen = false;
     private bool isBurning = false;
 
+    public GameObject waterSurface;
+    private GameObject waterSurfaceInstance;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -103,10 +106,23 @@ public class GroundCollider : MonoBehaviour
 
     void GetWet()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
         if (!isFrozen)
         {
             isWet = true;
             spriteRenderer.color = Color.Lerp(Color.blue, Color.white, 0.5f);
+
+            Vector3 currentPosition = transform.position;
+
+            // Create a new position with an offset of +0.5 on the y-axis
+            Vector3 newPosition = new Vector3(currentPosition.x, currentPosition.y + 0.5f, currentPosition.z);
+
+            // Instantiate the prefab at the new position
+            waterSurfaceInstance = Instantiate(waterSurface, newPosition, Quaternion.identity);
+
             StartCoroutine(ResetAfterDuration(wetDuration));
         }
     }
@@ -119,11 +135,15 @@ public class GroundCollider : MonoBehaviour
             Destroy(fireEffectInstance);
         }
         isBurning = false;
-        GetWet();
+        gameObject.tag = "Ground";
     }
 
     void GetFrozen()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
         isFrozen = true;
         spriteRenderer.sprite = iceSprite;
         StartCoroutine(MeltIce(frozenDuration));
@@ -134,6 +154,7 @@ public class GroundCollider : MonoBehaviour
         int randomIndex = Random.Range(0, grassSprites.Length);
         spriteRenderer.sprite = grassSprites[randomIndex];
         isFlammable = true;
+        isRevivable = false;
     }
 
     void Burn()
@@ -191,9 +212,44 @@ public class GroundCollider : MonoBehaviour
 
     IEnumerator ResetAfterDuration(float duration)
     {
+        StartCoroutine(FadeToWhite(spriteRenderer, waterSurfaceInstance, duration));
         yield return new WaitForSeconds(duration);
         isWet = false;
-        spriteRenderer.color = Color.white; // Reset to original color
+    }
+
+    IEnumerator FadeToWhite(SpriteRenderer spriteRenderer, GameObject wetSurfaceInstance, float duration)
+    {
+        Color startColor = spriteRenderer.color;
+        Color endColor = Color.white;
+        float elapsedTime = 0;
+
+        SpriteRenderer wetSurfaceRenderer = null;
+        if (wetSurfaceInstance != null)
+        {
+            wetSurfaceRenderer = wetSurfaceInstance.GetComponent<SpriteRenderer>();
+        }
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            spriteRenderer.color = Color.Lerp(startColor, endColor, t);
+
+            if (wetSurfaceRenderer != null)
+            {
+                Color wetSurfaceColor = wetSurfaceRenderer.color;
+                wetSurfaceColor.a = Mathf.Lerp(1f, 0f, t); // Fade out alpha
+                wetSurfaceRenderer.color = wetSurfaceColor;
+            }
+
+            yield return null;
+        }
+
+        spriteRenderer.color = endColor;
+        if (wetSurfaceRenderer != null)
+        {
+            wetSurfaceRenderer.color = new Color(wetSurfaceRenderer.color.r, wetSurfaceRenderer.color.g, wetSurfaceRenderer.color.b, 0);
+        }
     }
 
     IEnumerator MeltIce(float duration)

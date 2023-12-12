@@ -20,6 +20,9 @@ public class FlammableCharacter : MonoBehaviour
 
     private string playerTag;
 
+    public GameObject frozenEffect;
+    public GameObject wetEffect;
+
     void Start()
     {
         spriteGroup = this.transform.GetComponentsInChildren<SpriteRenderer>(true);
@@ -28,9 +31,21 @@ public class FlammableCharacter : MonoBehaviour
 
     void Update()
     {
-        if (gameObject.tag == "Water")
+        if (isFrozen)
         {
-            GetWet();
+            frozenEffect.SetActive(true);
+/*             SpriteRenderer spriteRenderer = wetEffect.GetComponent<SpriteRenderer>();
+            Color newColor = spriteRenderer.color;
+            newColor.a = 1f;
+            spriteRenderer.color = newColor; */
+        }
+        else
+        {
+            frozenEffect.SetActive(false);
+/*             SpriteRenderer spriteRenderer = wetEffect.GetComponent<SpriteRenderer>();
+            Color newColor = spriteRenderer.color;
+            newColor.a = 0;
+            spriteRenderer.color = newColor; */
         }
     }
 
@@ -75,7 +90,7 @@ public class FlammableCharacter : MonoBehaviour
                 }
                 break;
             case "Fire":
-                if (!isWet && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold"))
+                if (!isWet && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold") && (gameObject.tag != "Water"))
                 {
                     Burn();
                 }
@@ -85,7 +100,7 @@ public class FlammableCharacter : MonoBehaviour
                 }
                 break;
             case "Flame":
-                if (!isWet && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold"))
+                if ((gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame"))
                 {
                     Burn();
                 }
@@ -112,18 +127,10 @@ public class FlammableCharacter : MonoBehaviour
                 {
                     GetWet();
                 }
-                else if (isBurning)
-                {
-                    CancelBurning();
-                }
                 break;
             case "Ice":
                 if (gameObject.tag != "Ice")
                     GetFrozen();
-                if (isBurning)
-                {
-                    CancelBurning();
-                }
                 break;
             case "Cold":
                 if ((gameObject.tag != "Ice") && isWet)
@@ -144,7 +151,7 @@ public class FlammableCharacter : MonoBehaviour
                 }
                 break;
             case "Fire":
-                if (!isWet && !isFrozen && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold"))
+                if (!isWet && !isFrozen && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold") && (gameObject.tag != "Water"))
                 {
                     Burn();
                 }
@@ -154,7 +161,7 @@ public class FlammableCharacter : MonoBehaviour
                 }
                 break;
             case "Flame":
-                if (!isWet && (gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame") && (gameObject.tag != "Cold"))
+                if ((gameObject.tag != "Ice") && (gameObject.tag != "Fire") && (gameObject.tag != "Flame"))
                 {
                     Burn();
                 }
@@ -207,26 +214,22 @@ public class FlammableCharacter : MonoBehaviour
             yield return new WaitForSeconds(burnDamageInterval);
         }
 
-        StopBurning();
-    }
-
-    void StopBurning()
-    {
-        isBurning = false;
-        if (fireEffectInstance != null)
-        {
-            Destroy(fireEffectInstance);
-        }
-
-        gameObject.tag = playerTag;
+        CancelBurning();
     }
 
     void GetWet()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
+                if (!isFrozen)
+                {
         isWet = true;
         foreach (SpriteRenderer spriteRenderer in spriteGroup)
             spriteRenderer.color = Color.Lerp(Color.blue, Color.white, 0.5f);
         StartCoroutine(ResetAfterDuration(wetDuration));
+    }
     }
 
     void CancelBurning()
@@ -237,11 +240,15 @@ public class FlammableCharacter : MonoBehaviour
             Destroy(fireEffectInstance);
         }
         isBurning = false;
-        GetWet();
+        gameObject.tag = playerTag;
     }
 
     void GetFrozen()
     {
+        if (isBurning)
+                {
+                    CancelBurning();
+                }
         isFrozen = true;
         foreach (SpriteRenderer spriteRenderer in spriteGroup)
             spriteRenderer.color = Color.blue;
@@ -255,13 +262,46 @@ public class FlammableCharacter : MonoBehaviour
         GetWet();
     }
 
-    IEnumerator ResetAfterDuration(float duration)
+IEnumerator ResetAfterDuration(float duration)
+{
+            foreach (SpriteRenderer spriteRenderer1 in spriteGroup)
+            StartCoroutine(FadeToWhite(spriteRenderer1, duration));
+    float elapsed = 0;
+            SpriteRenderer spriteRenderer = wetEffect.GetComponent<SpriteRenderer>();
+    while (elapsed < duration)
     {
-        yield return new WaitForSeconds(duration);
-        isWet = false;
-        foreach (SpriteRenderer spriteRenderer in spriteGroup)
-            spriteRenderer.color = Color.white; // Reset to original color
+        elapsed += Time.deltaTime;
+        float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+            Color newColor = spriteRenderer.color;
+            newColor.a = alpha;
+            spriteRenderer.color = newColor;
+
+        yield return null; // Wait for the next frame
     }
+
+    isWet = false;
+
+        Color finalColor = spriteRenderer.color;
+        finalColor.a = 0; // Ensure final alpha is set to 0
+        spriteRenderer.color = finalColor;
+    }
+
+    IEnumerator FadeToWhite(SpriteRenderer spriteRenderer, float duration)
+    {
+        Color startColor = spriteRenderer.color;
+        Color endColor = Color.white;
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            spriteRenderer.color = Color.Lerp(startColor, endColor, elapsedTime / duration);
+            yield return null;
+        }
+
+        spriteRenderer.color = endColor;
+    }
+
 
     IEnumerator MeltIce(float duration)
     {

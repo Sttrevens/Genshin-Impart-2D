@@ -16,4 +16,4 @@ MonoBehaviour:
   tileAssets:
   - {fileID: 21300000, guid: 770fe947d1f97e942855e014cf644307, type: 3}
   - {fileID: 21300000, guid: 189018b9bad320d4882f7b1010d12a55, type: 3}
-  noiseThreshold: 0.4
+  noiseThreshold: 0.5

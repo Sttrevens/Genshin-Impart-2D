@@ -214,7 +214,10 @@ public class FlammableCharacter : MonoBehaviour
         while (timer < duration)
         {
             timer += burnDamageInterval;
-            playerHealth.TakeDamage(burnDamage);
+            if (gameObject.tag == "Grass")
+                playerHealth.TakeFireDamage(burnDamage * 2);
+            else
+                playerHealth.TakeFireDamage(burnDamage);
             yield return new WaitForSeconds(burnDamageInterval);
         }
 

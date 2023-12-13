@@ -15,4 +15,4 @@ MonoBehaviour:
   tilePrefab: {fileID: 2799075405848522613, guid: 09fca498437be414fa0bd9cac35cc37a, type: 3}
   tileAssets:
   - {fileID: 21300000, guid: 76a41a9860261cb4e8ceda1c039f53dc, type: 3}
-  noiseThreshold: 0.1
+  noiseThreshold: 0.4

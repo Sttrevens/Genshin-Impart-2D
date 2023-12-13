@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 1058893035
   m_SortingLayer: -1
   m_SortingOrder: -10
-  m_Sprite: {fileID: 21300000, guid: 189018b9bad320d4882f7b1010d12a55, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 770fe947d1f97e942855e014cf644307, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -109,6 +109,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 34168fb545d6ce04cb769914df686e0a, type: 3}
   isFlammable: 1
   isRevivable: 0
+  isFlamming: 0
   burnDuration: 10
   wetDuration: 10
   firePrefab: {fileID: 8764043878647920493, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}

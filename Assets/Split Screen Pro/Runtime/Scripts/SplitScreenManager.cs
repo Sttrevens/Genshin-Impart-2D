@@ -131,6 +131,10 @@ namespace SplitScreenPro {
             }
             secondaryCamera = transform.Find("SecondaryCamera").GetComponent<Camera>();
             secondaryCamera.CopyFrom(mainCamera);
+            int layer1 = LayerMask.NameToLayer("Camera 1");
+            int layer2 = LayerMask.NameToLayer("Camera 2");
+            secondaryCamera.cullingMask &= ~(1 << layer1);
+            secondaryCamera.cullingMask |= 1 << layer2;
 
             canvas = GetComponentInChildren<Canvas>();
             canvas.enabled = false;

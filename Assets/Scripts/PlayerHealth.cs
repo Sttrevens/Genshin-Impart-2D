@@ -15,6 +15,8 @@ public class PlayerHealth : MonoBehaviour
     public ParticleSystem[] bloodEffects;
     public GameObject drunkEffect;
 
+    public CharacterController_2D characterController;
+
      private void Start()
     {
         currentHealth = maxHealth;
@@ -22,6 +24,22 @@ public class PlayerHealth : MonoBehaviour
     }
 
     public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        onHealthChanged?.Invoke(currentHealth);
+        UpdateBloodEffectColor();
+
+        characterController.m_Animator.Play("Hit");
+
+        if (currentHealth <= 0)
+        {
+            ReloadScene();
+        }
+    }
+
+    public void TakeFireDamage(int damage)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -68,6 +86,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void ReloadScene()
     {
+        characterController.m_Animator.Play("Die");
         //SceneManager.LoadScene(mainGameScene);
     }
 }

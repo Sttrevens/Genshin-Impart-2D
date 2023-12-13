@@ -10,6 +10,7 @@ public class GroundCollider : MonoBehaviour
     private Sprite originalSprite;
     public bool isFlammable = false;
     public bool isRevivable = false;
+    public bool isFlamming = false;
     public float burnDuration = 10f;
     public float wetDuration = 10f;
 
@@ -31,6 +32,11 @@ public class GroundCollider : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalSprite = spriteRenderer.sprite;
+
+        if (isFlamming)
+        {
+            gameObject.tag = "Fire";
+        }
     }
 
     void Update()

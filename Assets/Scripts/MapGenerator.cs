@@ -100,7 +100,7 @@ public class MapGenerator : MonoBehaviour
         {
             Debug.LogError("chosenPrefab is null.");
         }
-        Vector3Int tilePosition = new Vector3Int(x - width / 2, y - height / 2, 0);
+        Vector3Int tilePosition = new Vector3Int(x - width / 2 + Mathf.FloorToInt(transform.position.x), y - height / 2 + Mathf.FloorToInt(transform.position.y), 0);
 
         GameObject tileObject = Instantiate(chosenPrefab, tilePosition, Quaternion.identity);
         tileObject.transform.parent = transform;

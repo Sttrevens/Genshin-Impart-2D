@@ -28,11 +28,11 @@ TagManager:
   - Background
   - Grass
   - Lava
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Camera 1
+  - Camera 2
+  - Player 1
+  - Player 2
+  - Hittable
   - 
   - 
   - 

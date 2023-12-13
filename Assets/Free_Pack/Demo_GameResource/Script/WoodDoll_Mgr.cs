@@ -8,6 +8,7 @@ public class WoodDoll_Mgr : MonoBehaviour {
     public int sortingOrder = 0;
     public int sortingOrderOrigine = 0;
     public SpriteRenderer[] m_SpriteGroup;
+    public string element;
 
     Animator m_Animator;
     // Use this for initialization

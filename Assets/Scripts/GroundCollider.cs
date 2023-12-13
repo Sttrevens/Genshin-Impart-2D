@@ -24,10 +24,18 @@ public class GroundCollider : MonoBehaviour
     public GameObject waterSurface;
     private GameObject waterSurfaceInstance;
 
+    private float yDeviation;
+    public ChangeTagwithInput changeTagwithInput;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalSprite = spriteRenderer.sprite;
+    }
+
+    void Update()
+    {
+        yDeviation = changeTagwithInput.yDeviation;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -102,6 +110,23 @@ public class GroundCollider : MonoBehaviour
                 }
                 break;
         }
+
+        if (isFrozen && other.GetComponent<CharacterController_2D>())
+        {
+            other.GetComponent<CharacterController_2D>().EnterIce();
+        }
+        else if (!isFrozen && other.GetComponent<CharacterController_2D>())
+        {
+            other.GetComponent<CharacterController_2D>().ExitIce();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (isFrozen && other.GetComponent<CharacterController_2D>())
+        {
+            other.GetComponent<CharacterController_2D>().ExitIce();
+        }
     }
 
     void GetWet()
@@ -118,7 +143,7 @@ public class GroundCollider : MonoBehaviour
             Vector3 currentPosition = transform.position;
 
             // Create a new position with an offset of +0.5 on the y-axis
-            Vector3 newPosition = new Vector3(currentPosition.x, currentPosition.y + 0.5f, currentPosition.z);
+            Vector3 newPosition = new Vector3(currentPosition.x, currentPosition.y + yDeviation, currentPosition.z);
 
             // Instantiate the prefab at the new position
             waterSurfaceInstance = Instantiate(waterSurface, newPosition, Quaternion.identity);

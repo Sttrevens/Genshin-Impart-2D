@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ChangeTagwithInput : MonoBehaviour
 {
+    public float yDeviation = 0.5f;
     // Start is called before the first frame update
     void Start()
     {
@@ -12,22 +13,22 @@ public class ChangeTagwithInput : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             gameObject.tag = "Fire";
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             gameObject.tag = "Water";
         }
 
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             gameObject.tag = "Ice";
         }
 
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             gameObject.tag = "Grass";
         }

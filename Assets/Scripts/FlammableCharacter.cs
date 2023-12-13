@@ -23,10 +23,14 @@ public class FlammableCharacter : MonoBehaviour
     public GameObject frozenEffect;
     public GameObject wetEffect;
 
+    public Animator playerAnimator;
+    private Rigidbody2D playerRigidbody;
+
     void Start()
     {
         spriteGroup = this.transform.GetComponentsInChildren<SpriteRenderer>(true);
         playerHealth = GetComponent<PlayerHealth>();
+        playerRigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -219,17 +223,20 @@ public class FlammableCharacter : MonoBehaviour
 
     void GetWet()
     {
-        if (isBurning)
-                {
-                    CancelBurning();
-                }
-                if (!isFrozen)
-                {
-        isWet = true;
-        foreach (SpriteRenderer spriteRenderer in spriteGroup)
-            spriteRenderer.color = Color.Lerp(Color.blue, Color.white, 0.5f);
-        StartCoroutine(ResetAfterDuration(wetDuration));
-    }
+        if (!isFrozen)
+        {
+            if (isBurning)
+            {
+                CancelBurning();
+            }
+            if (!isFrozen)
+            {
+                isWet = true;
+                foreach (SpriteRenderer spriteRenderer in spriteGroup)
+                    spriteRenderer.color = Color.Lerp(Color.blue, Color.white, 0.5f);
+                StartCoroutine(ResetAfterDuration(wetDuration));
+            }
+        }
     }
 
     void CancelBurning()
@@ -250,6 +257,7 @@ public class FlammableCharacter : MonoBehaviour
                     CancelBurning();
                 }
         isFrozen = true;
+        StopPlayerMovement();
         foreach (SpriteRenderer spriteRenderer in spriteGroup)
             spriteRenderer.color = Color.blue;
         StartCoroutine(MeltIce(frozenDuration));
@@ -262,8 +270,8 @@ public class FlammableCharacter : MonoBehaviour
         GetWet();
     }
 
-IEnumerator ResetAfterDuration(float duration)
-{
+    IEnumerator ResetAfterDuration(float duration)
+    {
             foreach (SpriteRenderer spriteRenderer1 in spriteGroup)
             StartCoroutine(FadeToWhite(spriteRenderer1, duration));
     float elapsed = 0;
@@ -307,6 +315,35 @@ IEnumerator ResetAfterDuration(float duration)
     {
         yield return new WaitForSeconds(duration);
         isFrozen = false;
+        ResumePlayerMovement();
         GetWet(); // Enter wet state
+    }
+
+    public void StopPlayerMovement()
+    {
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.velocity = Vector2.zero;
+            playerRigidbody.angularVelocity = 0f;
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll; // Freeze position and rotation
+        }
+
+        if (playerAnimator != null)
+        {
+            playerAnimator.speed = 0; // Freeze animations
+        }
+    }
+
+    public void ResumePlayerMovement()
+    {
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.constraints = RigidbodyConstraints2D.None; // Or any other constraints you originally had
+        }
+
+        if (playerAnimator != null)
+        {
+            playerAnimator.speed = 1; // Resume animations
+        }
     }
 }

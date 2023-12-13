@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 1058893035
   m_SortingLayer: -1
   m_SortingOrder: -10
-  m_Sprite: {fileID: 21300000, guid: 32e1f804f7b0df04eb563bea2f424c08, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 371d4e337fe17074db2479c5930c0dbf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -114,6 +114,7 @@ MonoBehaviour:
   firePrefab: {fileID: 8764043878647920493, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
   frozenDuration: 5
   waterSurface: {fileID: 8659944129095890745, guid: 23b33a77525e32645845df93347ecd74, type: 3}
+  changeTagwithInput: {fileID: 7607378199139441371, guid: 45dc95ef823e0f74ca8890ec1b20e993, type: 3}
 --- !u!61 &-8330177471478876542
 BoxCollider2D:
   m_ObjectHideFlags: 0

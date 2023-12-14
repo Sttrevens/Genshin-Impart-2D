@@ -17,6 +17,8 @@ public class PlayerHealth : MonoBehaviour
 
     public CharacterController_2D characterController;
 
+    private Rigidbody2D playerRigidbody;
+
      private void Start()
     {
         currentHealth = maxHealth;
@@ -87,6 +89,14 @@ public class PlayerHealth : MonoBehaviour
     public void ReloadScene()
     {
         characterController.m_Animator.Play("Die");
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.velocity = Vector2.zero;
+            playerRigidbody.angularVelocity = 0f;
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll; // Freeze position and rotation
+        }
+
+        characterController.attackDamage = 0;
         //SceneManager.LoadScene(mainGameScene);
     }
 }

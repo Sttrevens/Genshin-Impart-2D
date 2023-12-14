@@ -18,9 +18,9 @@ public class GroundCollider : MonoBehaviour
     private GameObject fireEffectInstance;
     public float frozenDuration = 5f;
 
-    private bool isWet = false;
-    private bool isFrozen = false;
-    private bool isBurning = false;
+    public bool isWet = false;
+    public bool isFrozen = false;
+    public bool isBurning = false;
 
     public GameObject waterSurface;
     private GameObject waterSurfaceInstance;

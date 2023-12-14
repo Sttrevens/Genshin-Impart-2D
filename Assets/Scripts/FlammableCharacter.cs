@@ -25,12 +25,17 @@ public class FlammableCharacter : MonoBehaviour
 
     public Animator playerAnimator;
     private Rigidbody2D playerRigidbody;
+    private int characterDamage;
+
+    private CharacterController_2D characterController;
 
     void Start()
     {
         spriteGroup = this.transform.GetComponentsInChildren<SpriteRenderer>(true);
         playerHealth = GetComponent<PlayerHealth>();
         playerRigidbody = GetComponent<Rigidbody2D>();
+        characterDamage = characterController.attackDamage;
+        characterController = GetComponent<CharacterController_2D>();
     }
 
     void Update()
@@ -42,6 +47,7 @@ public class FlammableCharacter : MonoBehaviour
             Color newColor = spriteRenderer.color;
             newColor.a = 1f;
             spriteRenderer.color = newColor; */
+            characterController.attackDamage = 0;
         }
         else
         {
@@ -50,6 +56,7 @@ public class FlammableCharacter : MonoBehaviour
             Color newColor = spriteRenderer.color;
             newColor.a = 0;
             spriteRenderer.color = newColor; */
+            characterController.attackDamage = characterDamage;
         }
     }
 

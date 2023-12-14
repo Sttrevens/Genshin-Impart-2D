@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterController_2D : MonoBehaviour {
 
@@ -67,6 +68,9 @@ public class CharacterController_2D : MonoBehaviour {
     public ParticleSystem coldPowerParticle;
     private bool isCold = false;
 
+    public float attackInterval = 0.5f; // Time in seconds between attacks
+    private float lastAttackTime = 0;
+
     // Use this for initialization
     void Start () {
         m_rigidbody = this.GetComponent<Rigidbody2D>();
@@ -81,6 +85,11 @@ public class CharacterController_2D : MonoBehaviour {
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
         if (!isPlayer2)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -273,7 +282,7 @@ public class CharacterController_2D : MonoBehaviour {
         while (firePower > 0)
         {
             firePower -= 0.5f * Time.deltaTime;
-            Debug.Log("Fire Power: " + firePower);
+            //Debug.Log("Fire Power: " + firePower);
             yield return null;
         }
 
@@ -403,19 +412,22 @@ public class CharacterController_2D : MonoBehaviour {
         spacePressTime += Time.deltaTime;
     }
 
-    // Check if the space key is released
-    if (Input.GetKeyUp(KeyCode.Space))
-    {
-        if (spacePressTime < longPressThreshold)
+        if (Time.time >= lastAttackTime + attackInterval)
         {
-            PerformAttack1();
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                if (spacePressTime < longPressThreshold)
+                {
+                    PerformAttack1();
+                }
+                else
+                {
+                    PerformAttack2();
+                }
+                lastAttackTime = Time.time;
+                isSpacePressed = false;
+            }
         }
-        else
-        {
-            PerformAttack2();
-        }
-        isSpacePressed = false;
-    }
     }
 
     void PlayerIIMove()
@@ -432,19 +444,22 @@ public class CharacterController_2D : MonoBehaviour {
         rAltPressTime += Time.deltaTime;
     }
 
-    // Check if the space key is released
-    if (Input.GetKeyUp(KeyCode.Slash))
-    {
-        if (rAltPressTime < longPressThreshold)
+        if (Time.time >= lastAttackTime + attackInterval)
         {
-            PerformAttack1();
+            if (Input.GetKeyUp(KeyCode.Slash))
+            {
+                if (rAltPressTime < longPressThreshold)
+                {
+                    PerformAttack1();
+                }
+                else
+                {
+                    PerformAttack2();
+                }
+                lastAttackTime = Time.time;
+                isRAltPressed = false;
+            }
         }
-        else
-        {
-            PerformAttack2();
-        }
-        isRAltPressed = false;
-    }
     }
 
     void PerformAttack1()
@@ -630,12 +645,16 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.A))
         {
+            if (Input.GetKeyUp(KeyCode.V))
+                Dash(Vector2.left);
             inputForce += Vector2.left * MoveSpeed * dashMultiplier;
             if (B_FacingRight)
                 Filp();
         }
         else if (Input.GetKey(KeyCode.D))
         {
+            if (Input.GetKeyUp(KeyCode.V))
+                Dash(Vector2.right);
             inputForce += Vector2.right * MoveSpeed * dashMultiplier;
             if (!B_FacingRight)
                 Filp();
@@ -643,40 +662,16 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.W))
         {
+            if (Input.GetKeyUp(KeyCode.V))
+                Dash(Vector2.up);
             inputForce += Vector2.up * MoveSpeed * dashMultiplier;
         }
         else if (Input.GetKey(KeyCode.S))
         {
+            if (Input.GetKeyUp(KeyCode.V))
+                Dash(Vector2.down);
             inputForce += Vector2.down * MoveSpeed * dashMultiplier;
         }
-
-        if (Input.GetKeyDown(KeyCode.A))
-    {
-        if (Time.time < lastTapTimeA + doubleTapTime)
-            Dash(Vector2.left);
-        lastTapTimeA = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.D))
-    {
-        if (Time.time < lastTapTimeD + doubleTapTime)
-            Dash(Vector2.right);
-        lastTapTimeD = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.W))
-    {
-        if (Time.time < lastTapTimeW + doubleTapTime)
-            Dash(Vector2.up);
-        lastTapTimeW = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.S))
-    { 
-        if (Time.time < lastTapTimeS + doubleTapTime)
-            Dash(Vector2.down);
-        lastTapTimeS = Time.time;
-    }
 
         ApplyMovement(inputForce * Time.deltaTime);
 
@@ -700,12 +695,16 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.J))
         {
+            if (Input.GetKeyUp(KeyCode.Quote))
+                Dash(Vector2.left);
             inputForce += Vector2.left * MoveSpeed * dashMultiplier;
             if (B_FacingRight)
                 Filp();
         }
         else if (Input.GetKey(KeyCode.L))
         {
+            if (Input.GetKeyUp(KeyCode.Quote))
+                Dash(Vector2.right);
             inputForce += Vector2.right * MoveSpeed * dashMultiplier;
             if (!B_FacingRight)
                 Filp();
@@ -713,40 +712,16 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.I))
         {
+            if (Input.GetKeyUp(KeyCode.Quote))
+                Dash(Vector2.up);
             inputForce += Vector2.up * MoveSpeed * dashMultiplier;
         }
         else if (Input.GetKey(KeyCode.K))
         {
+            if (Input.GetKeyUp(KeyCode.Quote))
+                Dash(Vector2.down);
             inputForce += Vector2.down * MoveSpeed * dashMultiplier;
         }
-
-        if (Input.GetKeyDown(KeyCode.J))
-    {
-        if (Time.time < lastTapTimeA + doubleTapTime)
-            Dash(Vector2.left);
-        lastTapTimeA = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.L))
-    {
-        if (Time.time < lastTapTimeD + doubleTapTime)
-            Dash(Vector2.right);
-        lastTapTimeD = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.I))
-    {
-        if (Time.time < lastTapTimeW + doubleTapTime)
-            Dash(Vector2.up);
-        lastTapTimeW = Time.time;
-    }
-
-    if (Input.GetKeyDown(KeyCode.K))
-    { 
-        if (Time.time < lastTapTimeS + doubleTapTime)
-            Dash(Vector2.down);
-        lastTapTimeS = Time.time;
-    }
 
         ApplyMovement(inputForce * Time.deltaTime);
 

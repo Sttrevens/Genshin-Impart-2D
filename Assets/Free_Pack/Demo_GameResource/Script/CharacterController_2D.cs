@@ -531,7 +531,15 @@ public class CharacterController_2D : MonoBehaviour {
             m_Animator.SetTrigger("Attack");
 
             m_rigidbody.velocity = new Vector3(0, 0, 0);
-            
+
+        StartCoroutine(DelayedRaycastVisualization1());
+    }
+
+    IEnumerator DelayedRaycastVisualization1()
+    {
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.15f);
+
         Vector2 direction = B_FacingRight ? Vector2.right : Vector2.left;
         Vector2 offset = new Vector2(attackRange * 0.5f, 0);
         Vector2 start = transform.position + (Vector3)(direction * offset);
@@ -548,7 +556,7 @@ public class CharacterController_2D : MonoBehaviour {
         Debug.DrawRay(start + new Vector2(size.x / 2, -size.y / 2), direction * attackRange, rayColor, 1.0f);
         Debug.DrawRay(start - new Vector2(size.x / 2, -size.y / 2), direction * attackRange, rayColor, 1.0f);
         Debug.Log("Hit collider: " + hit.collider);
-        
+
         if (hit.collider != null)
         {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();
@@ -594,13 +602,21 @@ public class CharacterController_2D : MonoBehaviour {
         }
     }
 
-    void PerformAttack2()
+        void PerformAttack2()
     {
         Once_Attack = false;
             m_Animator.SetTrigger("Attack2");
 
             m_rigidbody.velocity = new Vector3(0, 0, 0);
-        
+
+        StartCoroutine(DelayedRaycastVisualization2());
+    }
+
+    IEnumerator DelayedRaycastVisualization2()
+    {
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.2f);
+
         Vector2 direction = B_FacingRight ? Vector2.right : Vector2.left;
         Vector2 offset = new Vector2(attackRange * 0.5f, 0);
         Vector2 start = transform.position + (Vector3)(direction * offset);
@@ -617,7 +633,7 @@ public class CharacterController_2D : MonoBehaviour {
         Debug.DrawRay(start + new Vector2(size.x / 2, -size.y / 2), direction * attackRange * 2f, rayColor, 1.0f);
         Debug.DrawRay(start - new Vector2(size.x / 2, -size.y / 2), direction * attackRange * 2f, rayColor, 1.0f);
         Debug.Log("Hit collider: " + hit.collider);
-        
+
         if (hit.collider != null)
         {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();

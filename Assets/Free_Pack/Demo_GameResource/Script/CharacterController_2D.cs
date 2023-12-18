@@ -77,10 +77,10 @@ public class CharacterController_2D : MonoBehaviour {
         m_tran = this.transform;
         m_SpriteGroup = this.transform.Find("BURLY-MAN_1_swordsman_model").GetComponentsInChildren<SpriteRenderer>(true);
 
-    fireMeter.SetMaxHealth(8f);
-    waterMeter.SetMaxHealth(8f);
-    grassMeter.SetMaxHealth(8f);
-    coldMeter.SetMaxHealth(8f);
+        fireMeter.SetMaxHealth(8f);
+        waterMeter.SetMaxHealth(8f);
+        grassMeter.SetMaxHealth(8f);
+        coldMeter.SetMaxHealth(8f);
     }
 
     void Update()
@@ -209,7 +209,7 @@ public class CharacterController_2D : MonoBehaviour {
             }
         }
 
-        if ((gameObject.tag == "Fire" || gameObject.tag == "Flame") && firePower > 0)
+        /*if ((gameObject.tag == "Fire" || gameObject.tag == "Flame") && firePower > 0)
         {
             StartCoroutine(DecreasePower(firePower));
         }
@@ -224,24 +224,27 @@ public class CharacterController_2D : MonoBehaviour {
         else if ((gameObject.tag == "Cold" || gameObject.tag == "Ice") && coldPower > 0)
         {
             StartCoroutine(DecreasePower(coldPower));
-        }
+        }*/
 
         if (firePower <= 0)
         {
             isFire = false;
             DeactiveFirePower();
         }
-        else if (waterPower <= 0)
+        
+        if (waterPower <= 0)
         {
             isWater = false;
             DeactiveWaterPower();
         }
-        else if (grassPower <= 0)
+        
+        if (grassPower <= 0)
         {
             isGrass = false;
             DeactiveGrassPower();
         }
-        else if (coldPower <= 0)
+        
+        if (coldPower <= 0)
         {
             isCold = false;
             DeactiveColdPower();
@@ -277,23 +280,56 @@ public class CharacterController_2D : MonoBehaviour {
         }
     }
 
-    IEnumerator DecreasePower(float firePower)
+    IEnumerator DecreaseFirePower()
     {
         while (firePower > 0)
         {
             firePower -= 0.5f * Time.deltaTime;
-            //Debug.Log("Fire Power: " + firePower);
             yield return null;
         }
-
-        firePower = 0; // Ensure firePower doesn't go below zero
+        firePower = 0;
     }
 
+    IEnumerator DecreaseWaterPower()
+    {
+        while (waterPower > 0)
+        {
+            waterPower -= 0.5f * Time.deltaTime;
+            yield return null;
+        }
+        waterPower = 0;
+    }
+
+    IEnumerator DecreaseGrassPower()
+    {
+        while (grassPower > 0)
+        {
+            grassPower -= 0.5f * Time.deltaTime;
+            yield return null;
+        }
+        grassPower = 0;
+    }
+
+    IEnumerator DecreaseColdPower()
+    {
+        while (coldPower > 0)
+        {
+            coldPower -= 0.5f * Time.deltaTime;
+            yield return null;
+        }
+        coldPower = 0;
+    }
+
+    private Coroutine firePowerCoroutine;
     public void ActiveFirePower()
     {
         isFire = true;
         firePowerEffect.SetActive(true);
         firePowerParticle.Play();
+
+        if (firePowerCoroutine != null)
+            StopCoroutine(firePowerCoroutine);
+        firePowerCoroutine = StartCoroutine(DecreaseFirePower());
     }
 
     public void DeactiveFirePower()
@@ -301,13 +337,21 @@ public class CharacterController_2D : MonoBehaviour {
         isFire = false;
         firePowerEffect.SetActive(false);
         firePowerParticle.Stop();
+
+        if (firePowerCoroutine != null)
+            StopCoroutine(firePowerCoroutine);
     }
 
+    private Coroutine waterPowerCoroutine;
     public void ActiveWaterPower()
     {
         isWater = true;
         waterPowerEffect.SetActive(true);
         waterPowerParticle.Play();
+
+        if (waterPowerCoroutine != null)
+            StopCoroutine(waterPowerCoroutine);
+        waterPowerCoroutine = StartCoroutine(DecreaseWaterPower());
     }
 
     public void DeactiveWaterPower()
@@ -315,13 +359,21 @@ public class CharacterController_2D : MonoBehaviour {
         isWater = false;
         waterPowerEffect.SetActive(false);
         waterPowerParticle.Stop();
+        
+        if (waterPowerCoroutine != null)
+            StopCoroutine(waterPowerCoroutine);
     }
 
+    private Coroutine grassPowerCoroutine;
     public void ActiveGrassPower()
     {
         isGrass = true;
         grassPowerEffect.SetActive(true);
         grassPowerParticle.Play();
+
+        if (grassPowerCoroutine != null)
+            StopCoroutine(grassPowerCoroutine);
+        grassPowerCoroutine = StartCoroutine(DecreaseGrassPower());
     }
 
     public void DeactiveGrassPower()
@@ -329,13 +381,21 @@ public class CharacterController_2D : MonoBehaviour {
         isGrass = false;
         grassPowerEffect.SetActive(false);
         grassPowerParticle.Stop();
+
+        if (grassPowerCoroutine != null)
+            StopCoroutine(grassPowerCoroutine);
     }
 
+    private Coroutine coldPowerCoroutine;
     public void ActiveColdPower()
     {
         isCold = true;
         coldPowerEffect.SetActive(true);
         coldPowerParticle.Play();
+
+        if (coldPowerCoroutine != null)
+            StopCoroutine(coldPowerCoroutine);
+        coldPowerCoroutine = StartCoroutine(DecreaseColdPower());
     }
 
     public void DeactiveColdPower()
@@ -343,6 +403,9 @@ public class CharacterController_2D : MonoBehaviour {
         isCold = false;
         coldPowerEffect.SetActive(false);
         coldPowerParticle.Stop();
+
+        if (coldPowerCoroutine != null)
+            StopCoroutine(coldPowerCoroutine);
     }
 	
 	// Update is called once per frame

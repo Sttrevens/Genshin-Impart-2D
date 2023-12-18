@@ -58,6 +58,12 @@ public class FlammableCharacter : MonoBehaviour
             spriteRenderer.color = newColor; */
             characterController.attackDamage = characterDamage;
         }
+
+        /*if (isBurning)
+        {
+            Debug.Log(gameObject.tag);
+            gameObject.tag = "Fire";
+        }*/
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -221,7 +227,8 @@ public class FlammableCharacter : MonoBehaviour
         while (timer < duration)
         {
             timer += burnDamageInterval;
-            if (gameObject.tag == "Grass")
+            //gameObject.tag = "Fire";
+            if (playerTag == "Grass")
                 playerHealth.TakeFireDamage(burnDamage * 2);
             else
                 playerHealth.TakeFireDamage(burnDamage);

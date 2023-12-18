@@ -34,8 +34,8 @@ public class FlammableCharacter : MonoBehaviour
         spriteGroup = this.transform.GetComponentsInChildren<SpriteRenderer>(true);
         playerHealth = GetComponent<PlayerHealth>();
         playerRigidbody = GetComponent<Rigidbody2D>();
-        characterDamage = characterController.attackDamage;
         characterController = GetComponent<CharacterController_2D>();
+        characterDamage = characterController.attackDamage;
     }
 
     void Update()

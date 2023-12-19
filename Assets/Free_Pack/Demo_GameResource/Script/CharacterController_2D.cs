@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CharacterController_2D : MonoBehaviour {
+    public TrailRenderer trailRenderer;
+    private float trailDuration = 0.3f;
 
-  
     private Vector2 iceForce;
     public bool isOnIce = false;
     
@@ -23,12 +24,6 @@ public class CharacterController_2D : MonoBehaviour {
     public bool Once_Attack = false;
 
     public bool isPlayer2 = false;
-    private bool isSpacePressed = false;
-    private float spacePressTime = 0f;
-    public float longPressThreshold = 0.2f;
-
-    private bool isRAltPressed = false;
-    private float rAltPressTime = 0f;
     
     public float dashSpeed = 2.0f;
 
@@ -71,6 +66,19 @@ public class CharacterController_2D : MonoBehaviour {
     public float attackInterval = 0.5f; // Time in seconds between attacks
     private float lastAttackTime = 0;
 
+    private FootstepSounds footstepSounds;
+    private FlammableCharacter flammableCharacter;
+
+    public ParticleSystem hitEffectPrefab;
+
+    public AudioClip[] swordSwingClips;
+    public AudioClip[] hitClips;
+    public AudioClip[] swordHitClips;
+
+    public AudioClip[] powerClips;
+
+    private AudioSource audioSource;
+
     // Use this for initialization
     void Start () {
         m_rigidbody = this.GetComponent<Rigidbody2D>();
@@ -81,6 +89,13 @@ public class CharacterController_2D : MonoBehaviour {
         waterMeter.SetMaxHealth(8f);
         grassMeter.SetMaxHealth(8f);
         coldMeter.SetMaxHealth(8f);
+
+        footstepSounds = GetComponent<FootstepSounds>();
+        flammableCharacter = GetComponent<FlammableCharacter>();
+
+        trailRenderer.emitting = false;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -278,6 +293,22 @@ public class CharacterController_2D : MonoBehaviour {
         {
             gameObject.tag = "Player";
         }
+
+        if (isDashing)
+        {
+            footstepSounds.minInterval = 0.15f;
+            if (m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+            {
+                m_Animator.speed = 2.0f;
+            }
+            else
+                m_Animator.speed = 1f;
+        }
+        else
+        {
+            footstepSounds.minInterval = 0.3f;
+            m_Animator.speed = 1f;
+        }
     }
 
     IEnumerator DecreaseFirePower()
@@ -326,6 +357,9 @@ public class CharacterController_2D : MonoBehaviour {
         isFire = true;
         firePowerEffect.SetActive(true);
         firePowerParticle.Play();
+        PlaySoundEffect(powerClips[0]);
+
+        flammableCharacter.CancelBurning();
 
         if (firePowerCoroutine != null)
             StopCoroutine(firePowerCoroutine);
@@ -348,6 +382,9 @@ public class CharacterController_2D : MonoBehaviour {
         isWater = true;
         waterPowerEffect.SetActive(true);
         waterPowerParticle.Play();
+        PlaySoundEffect(powerClips[1]);
+
+        flammableCharacter.CancelBurning();
 
         if (waterPowerCoroutine != null)
             StopCoroutine(waterPowerCoroutine);
@@ -370,6 +407,7 @@ public class CharacterController_2D : MonoBehaviour {
         isGrass = true;
         grassPowerEffect.SetActive(true);
         grassPowerParticle.Play();
+        PlaySoundEffect(powerClips[2]);
 
         if (grassPowerCoroutine != null)
             StopCoroutine(grassPowerCoroutine);
@@ -392,6 +430,9 @@ public class CharacterController_2D : MonoBehaviour {
         isCold = true;
         coldPowerEffect.SetActive(true);
         coldPowerParticle.Play();
+        PlaySoundEffect(powerClips[3]);
+
+        flammableCharacter.CancelBurning();
 
         if (coldPowerCoroutine != null)
             StopCoroutine(coldPowerCoroutine);
@@ -426,25 +467,6 @@ public class CharacterController_2D : MonoBehaviour {
             PlayerIIMove();
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-          
-            Debug.Log("1");
-            m_Animator.Play("Hit");
-
-
-
-
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            Debug.Log("2");
-            m_Animator.Play("Die");
-
-
-        }
-
-
         if (m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") || m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Die")||
             m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Hit")|| m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
             return;
@@ -457,87 +479,77 @@ public class CharacterController_2D : MonoBehaviour {
         {
             Move_FucII();
         }
- 
     }
 
     void PlayerIMove()
     {
-        // Check if the space key is initially pressed
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-        isSpacePressed = true;
-        spacePressTime = 0f;
-    }
-
-    // If space key is being held down, increment the timer
-    if (isSpacePressed)
-    {
-        spacePressTime += Time.deltaTime;
-    }
-
+        // Check if enough time has passed since the last attack
         if (Time.time >= lastAttackTime + attackInterval)
         {
-            if (Input.GetKeyUp(KeyCode.Space))
+            // Check for attack key input
+            if (Input.GetKeyUp(KeyCode.C))
             {
-                if (spacePressTime < longPressThreshold)
-                {
-                    PerformAttack1();
-                }
-                else
-                {
-                    PerformAttack2();
-                }
-                lastAttackTime = Time.time;
-                isSpacePressed = false;
+                PerformAttack1();
+                lastAttackTime = Time.time; // Update the last attack time
+            }
+        }
+
+        if (Time.time >= lastAttackTime + attackInterval * 1.5f)
+        {
+            if (Input.GetKeyUp(KeyCode.V))
+            {
+                PerformAttack2();
+                lastAttackTime = Time.time; // Update the last attack time
             }
         }
     }
 
     void PlayerIIMove()
     {
-        if (Input.GetKeyDown(KeyCode.Slash))
-    {
-        isRAltPressed = true;
-        rAltPressTime = 0f;
-    }
-
-    // If space key is being held down, increment the timer
-    if (isRAltPressed)
-    {
-        rAltPressTime += Time.deltaTime;
-    }
-
         if (Time.time >= lastAttackTime + attackInterval)
         {
-            if (Input.GetKeyUp(KeyCode.Slash))
+            if (Input.GetKeyUp(KeyCode.Semicolon))
             {
-                if (rAltPressTime < longPressThreshold)
-                {
-                    PerformAttack1();
-                }
-                else
+                PerformAttack1();
+                lastAttackTime = Time.time;
+            }
+        }
+
+        if (Time.time >= lastAttackTime + attackInterval * 1.5f)
+        {
+            if (Input.GetKeyUp(KeyCode.Quote))
                 {
                     PerformAttack2();
-                }
                 lastAttackTime = Time.time;
-                isRAltPressed = false;
-            }
+                }
         }
     }
 
     void PerformAttack1()
     {
         Once_Attack = false;
-            m_Animator.SetTrigger("Attack");
+        m_Animator.SetTrigger("Attack");
 
-            m_rigidbody.velocity = new Vector3(0, 0, 0);
+        m_rigidbody.velocity = new Vector3(0, 0, 0);
+
+        trailRenderer.emitting = true;
+        if (!isDashing)
+        {
+            trailRenderer.startWidth = 0.5f;
+        }
+        else
+        {
+            trailRenderer.startWidth = 1f;
+        }
+        Invoke("StopTrail", trailDuration);
+
+        PlaySoundEffect(swordSwingClips[Random.Range(0, swordSwingClips.Length)]);
 
         StartCoroutine(DelayedRaycastVisualization1());
     }
 
     IEnumerator DelayedRaycastVisualization1()
     {
-        // Wait for 0.5 seconds
         yield return new WaitForSeconds(0.15f);
 
         Vector2 direction = B_FacingRight ? Vector2.right : Vector2.left;
@@ -561,6 +573,9 @@ public class CharacterController_2D : MonoBehaviour {
         {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();
             WoodDoll_Mgr woodDoll = hit.collider.GetComponent<WoodDoll_Mgr>();
+            EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
+
+            PlaySoundEffect(swordHitClips[Random.Range(0, swordHitClips.Length)]);
 
             if (targetHealth != null)
             {
@@ -573,12 +588,17 @@ public class CharacterController_2D : MonoBehaviour {
                 {
                     targetHealth.TakeDamage(attackDamage);
                 }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
             }
 
             if (woodDoll != null)
             {
                 woodDoll.Sword_Hitted();
-
+                
                 switch (woodDoll.element)
                 {
                     case "Fire":
@@ -598,6 +618,34 @@ public class CharacterController_2D : MonoBehaviour {
                         coldPower = Mathf.Clamp(coldPower, 0, 8f);
                         break;
                 }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
+            }
+
+            if (enemyController != null)
+            {
+                if (enemyController.isIce)
+                {
+                    waterPower++;
+                    waterPower = Mathf.Clamp(waterPower, 0, 8f);
+                    coldPower++;
+                    coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                }
+                else
+                {
+                    firePower++;
+                    firePower = Mathf.Clamp(firePower, 0, 8f);
+                    grassPower++;
+                    grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
             }
         }
     }
@@ -609,13 +657,28 @@ public class CharacterController_2D : MonoBehaviour {
 
             m_rigidbody.velocity = new Vector3(0, 0, 0);
 
+        trailRenderer.emitting = true;
+        if (!isDashing)
+        {
+            trailRenderer.startWidth = 0.5f;
+        }
+        else
+        {
+            trailRenderer.startWidth = 1f;
+        }
+        Invoke("StopTrail", trailDuration * 2f);
+
+        PlaySoundEffect(swordSwingClips[Random.Range(0, swordSwingClips.Length)]);
+
         StartCoroutine(DelayedRaycastVisualization2());
     }
 
     IEnumerator DelayedRaycastVisualization2()
     {
-        // Wait for 0.5 seconds
-        yield return new WaitForSeconds(0.2f);
+        if (!isDashing)
+            yield return new WaitForSeconds(0.2f);
+        else
+            yield return new WaitForSeconds(0.4f);
 
         Vector2 direction = B_FacingRight ? Vector2.right : Vector2.left;
         Vector2 offset = new Vector2(attackRange * 0.5f, 0);
@@ -639,6 +702,8 @@ public class CharacterController_2D : MonoBehaviour {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();
             WoodDoll_Mgr woodDoll = hit.collider.GetComponent<WoodDoll_Mgr>();
 
+            PlaySoundEffect(swordHitClips[Random.Range(0, swordHitClips.Length)]);
+
             if (targetHealth != null)
             {
                 // Apply damage
@@ -650,6 +715,11 @@ public class CharacterController_2D : MonoBehaviour {
                 {
                     targetHealth.TakeDamage(attackDamage);
                 }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(2f, 2f, 2f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
             }
 
             if (woodDoll != null)
@@ -675,8 +745,24 @@ public class CharacterController_2D : MonoBehaviour {
                         coldPower = Mathf.Clamp(coldPower, 0, 8f);
                         break;
                 }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(2f, 2f, 2f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
             }
         }
+    }
+
+    private void StopTrail()
+    {
+        trailRenderer.emitting = false;
+    }
+
+    public void PlaySoundEffect(AudioClip clip, float volumn = 1.0f)
+    {
+        if (clip != null)
+            audioSource.PlayOneShot(clip, volumn);
     }
 
     public int sortingOrder = 0;
@@ -704,9 +790,6 @@ public class CharacterController_2D : MonoBehaviour {
 
             Update_Tic = 0;
         }
-
-     
-
     }
 
     // character Move Function
@@ -724,7 +807,7 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.A))
         {
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.F))
                 Dash(Vector2.left);
             inputForce += Vector2.left * MoveSpeed * dashMultiplier;
             if (B_FacingRight)
@@ -732,7 +815,7 @@ public class CharacterController_2D : MonoBehaviour {
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.F))
                 Dash(Vector2.right);
             inputForce += Vector2.right * MoveSpeed * dashMultiplier;
             if (!B_FacingRight)
@@ -741,13 +824,13 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.W))
         {
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.F))
                 Dash(Vector2.up);
             inputForce += Vector2.up * MoveSpeed * dashMultiplier;
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKeyUp(KeyCode.F))
                 Dash(Vector2.down);
             inputForce += Vector2.down * MoveSpeed * dashMultiplier;
         }
@@ -774,7 +857,7 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.J))
         {
-            if (Input.GetKeyUp(KeyCode.Quote))
+            if (Input.GetKeyUp(KeyCode.Slash))
                 Dash(Vector2.left);
             inputForce += Vector2.left * MoveSpeed * dashMultiplier;
             if (B_FacingRight)
@@ -782,7 +865,7 @@ public class CharacterController_2D : MonoBehaviour {
         }
         else if (Input.GetKey(KeyCode.L))
         {
-            if (Input.GetKeyUp(KeyCode.Quote))
+            if (Input.GetKeyUp(KeyCode.Slash))
                 Dash(Vector2.right);
             inputForce += Vector2.right * MoveSpeed * dashMultiplier;
             if (!B_FacingRight)
@@ -791,13 +874,13 @@ public class CharacterController_2D : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.I))
         {
-            if (Input.GetKeyUp(KeyCode.Quote))
+            if (Input.GetKeyUp(KeyCode.Slash))
                 Dash(Vector2.up);
             inputForce += Vector2.up * MoveSpeed * dashMultiplier;
         }
         else if (Input.GetKey(KeyCode.K))
         {
-            if (Input.GetKeyUp(KeyCode.Quote))
+            if (Input.GetKeyUp(KeyCode.Slash))
                 Dash(Vector2.down);
             inputForce += Vector2.down * MoveSpeed * dashMultiplier;
         }

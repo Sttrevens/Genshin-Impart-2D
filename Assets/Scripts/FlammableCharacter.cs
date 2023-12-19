@@ -10,7 +10,7 @@ public class FlammableCharacter : MonoBehaviour
     public int burnDamage = 1; // Damage per tick while burning
     public float burnDamageInterval = 0.5f; // Interval in seconds for applying burn damage
 
-    private PlayerHealth playerHealth;
+    public PlayerHealth playerHealth;
     private GameObject fireEffectInstance;
     public GameObject firePrefab;
 
@@ -32,7 +32,6 @@ public class FlammableCharacter : MonoBehaviour
     void Start()
     {
         spriteGroup = this.transform.GetComponentsInChildren<SpriteRenderer>(true);
-        playerHealth = GetComponent<PlayerHealth>();
         playerRigidbody = GetComponent<Rigidbody2D>();
         characterController = GetComponent<CharacterController_2D>();
         characterDamage = characterController.attackDamage;
@@ -200,12 +199,7 @@ public class FlammableCharacter : MonoBehaviour
     {
         if (isBurning)
         {
-            StopCoroutine("BurningCoroutine");
-            if (fireEffectInstance != null)
-            {
-                Destroy(fireEffectInstance);
-            }
-            isBurning = false;
+            return;
         }
 
         playerTag = gameObject.tag;
@@ -227,7 +221,7 @@ public class FlammableCharacter : MonoBehaviour
         while (timer < duration)
         {
             timer += burnDamageInterval;
-            //gameObject.tag = "Fire";
+            gameObject.tag = "Fire";
             if (playerTag == "Grass")
                 playerHealth.TakeFireDamage(burnDamage * 2);
             else
@@ -251,12 +245,13 @@ public class FlammableCharacter : MonoBehaviour
                 isWet = true;
                 foreach (SpriteRenderer spriteRenderer in spriteGroup)
                     spriteRenderer.color = Color.Lerp(Color.blue, Color.white, 0.5f);
+                characterController.PlaySoundEffect(characterController.powerClips[1]);
                 StartCoroutine(ResetAfterDuration(wetDuration));
             }
         }
     }
 
-    void CancelBurning()
+    public void CancelBurning()
     {
         StopCoroutine("BurningCoroutine");
         if (fireEffectInstance != null)
@@ -277,6 +272,7 @@ public class FlammableCharacter : MonoBehaviour
         StopPlayerMovement();
         foreach (SpriteRenderer spriteRenderer in spriteGroup)
             spriteRenderer.color = Color.blue;
+        characterController.PlaySoundEffect(characterController.powerClips[3]);
         StartCoroutine(MeltIce(frozenDuration));
     }
 
@@ -342,7 +338,7 @@ public class FlammableCharacter : MonoBehaviour
         {
             playerRigidbody.velocity = Vector2.zero;
             playerRigidbody.angularVelocity = 0f;
-            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll; // Freeze position and rotation
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
         }
 
         if (playerAnimator != null)
@@ -355,7 +351,7 @@ public class FlammableCharacter : MonoBehaviour
     {
         if (playerRigidbody != null)
         {
-            playerRigidbody.constraints = RigidbodyConstraints2D.None; // Or any other constraints you originally had
+            playerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
         if (playerAnimator != null)

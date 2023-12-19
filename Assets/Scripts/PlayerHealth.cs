@@ -34,6 +34,18 @@ public class PlayerHealth : MonoBehaviour
         UpdateBloodEffectColor();
 
         characterController.m_Animator.Play("Hit");
+        if (damage <= 10)
+        {
+            characterController.PlaySoundEffect(characterController.hitClips[Random.Range(0, 1)], 1.5f);
+        }
+        else if(damage > 10 && damage < 30)
+        {
+            characterController.PlaySoundEffect(characterController.hitClips[Random.Range(1, 3)], 1.5f);
+        }
+        else if (damage >= 30)
+        {
+            characterController.PlaySoundEffect(characterController.hitClips[Random.Range(3, 6)], 1.5f);
+        }
 
         if (currentHealth <= 0)
         {

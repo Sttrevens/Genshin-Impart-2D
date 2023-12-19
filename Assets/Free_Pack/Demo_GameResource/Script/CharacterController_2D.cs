@@ -574,6 +574,7 @@ public class CharacterController_2D : MonoBehaviour {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();
             WoodDoll_Mgr woodDoll = hit.collider.GetComponent<WoodDoll_Mgr>();
             EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
+            Projectile projectile = hit.collider.GetComponent<Projectile>();
 
             PlaySoundEffect(swordHitClips[Random.Range(0, swordHitClips.Length)]);
 
@@ -646,6 +647,11 @@ public class CharacterController_2D : MonoBehaviour {
                 if (isDashing)
                     hitEffectInstance.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
                 Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
+            }
+
+            if (projectile != null)
+            {
+                Destroy(projectile.gameObject);
             }
         }
     }

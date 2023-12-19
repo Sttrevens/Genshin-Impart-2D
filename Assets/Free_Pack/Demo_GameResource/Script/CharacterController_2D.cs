@@ -630,17 +630,37 @@ public class CharacterController_2D : MonoBehaviour {
             {
                 if (enemyController.isIce)
                 {
-                    waterPower++;
-                    waterPower = Mathf.Clamp(waterPower, 0, 8f);
-                    coldPower++;
-                    coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                    if (isDashing)
+                    {
+                        waterPower += 2;
+                        waterPower = Mathf.Clamp(waterPower, 0, 8f);
+                        coldPower += 2;
+                        coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                    }
+                    else
+                    {
+                        waterPower++;
+                        waterPower = Mathf.Clamp(waterPower, 0, 8f);
+                        coldPower++;
+                        coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                    }
                 }
                 else
                 {
-                    firePower++;
-                    firePower = Mathf.Clamp(firePower, 0, 8f);
-                    grassPower++;
-                    grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                    if (isDashing)
+                    {
+                        firePower += 2;
+                        firePower = Mathf.Clamp(firePower, 0, 8f);
+                        grassPower += 2;
+                        grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                    }
+                    else
+                    {
+                        firePower++;
+                        firePower = Mathf.Clamp(firePower, 0, 8f);
+                        grassPower++;
+                        grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                    }
                 }
 
                 ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
@@ -707,6 +727,8 @@ public class CharacterController_2D : MonoBehaviour {
         {
             PlayerHealth targetHealth = hit.collider.GetComponent<PlayerHealth>();
             WoodDoll_Mgr woodDoll = hit.collider.GetComponent<WoodDoll_Mgr>();
+            EnemyController enemyController = hit.collider.GetComponent<EnemyController>();
+            Projectile projectile = hit.collider.GetComponent<Projectile>();
 
             PlaySoundEffect(swordHitClips[Random.Range(0, swordHitClips.Length)]);
 
@@ -756,6 +778,54 @@ public class CharacterController_2D : MonoBehaviour {
                 if (isDashing)
                     hitEffectInstance.transform.localScale = new Vector3(2f, 2f, 2f);
                 Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
+            }
+
+            if (enemyController != null)
+            {
+                if (enemyController.isIce)
+                {
+                    if (isDashing)
+                    {
+                        waterPower += 3;
+                        waterPower = Mathf.Clamp(waterPower, 0, 8f);
+                        coldPower += 3;
+                        coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                    }
+                    else
+                    {
+                        waterPower++;
+                        waterPower = Mathf.Clamp(waterPower, 0, 8f);
+                        coldPower++;
+                        coldPower = Mathf.Clamp(coldPower, 0, 8f);
+                    }
+                }
+                else
+                {
+                    if (isDashing)
+                    {
+                        firePower += 3;
+                        firePower = Mathf.Clamp(firePower, 0, 8f);
+                        grassPower +=3;
+                        grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                    }
+                    else
+                    {
+                        firePower++;
+                        firePower = Mathf.Clamp(firePower, 0, 8f);
+                        grassPower++;
+                        grassPower = Mathf.Clamp(grassPower, 0, 8f);
+                    }
+                }
+
+                ParticleSystem hitEffectInstance = Instantiate(hitEffectPrefab, hit.point, Quaternion.identity);
+                if (isDashing)
+                    hitEffectInstance.transform.localScale = new Vector3(2f, 2f, 2f);
+                Destroy(hitEffectInstance.gameObject, hitEffectInstance.main.duration);
+            }
+
+            if (projectile != null)
+            {
+                Destroy(projectile.gameObject);
             }
         }
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4411394081242377257}
   - component: {fileID: 6277474574203324448}
   - component: {fileID: -4689900844493832207}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: FireBall
   m_TagString: Fire
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ed83babbecf6b41b7dc9940735718f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPosition: {x: 12.323179, y: -21.94707, z: 0}
+  targetPosition: {x: 13.791513, y: -20.555172, z: 0}
   speed: 5
   explosionEffectPrefab: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
   isIceBall: 0
@@ -174,6 +174,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7597731412786284180}
     m_Modifications:
+    - target: {fileID: 1206498299248906752, guid: af6c1e3f046eecd4d81330aeb285600f, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 1206498299248906754, guid: af6c1e3f046eecd4d81330aeb285600f, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
@@ -242,9 +246,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: CFXR4 Sun
       objectReference: {fileID: 0}
+    - target: {fileID: 1206498299807332555, guid: af6c1e3f046eecd4d81330aeb285600f, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 3405899300174267242, guid: af6c1e3f046eecd4d81330aeb285600f, type: 3}
       propertyPath: m_Intensity
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7747002053765534775, guid: af6c1e3f046eecd4d81330aeb285600f, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

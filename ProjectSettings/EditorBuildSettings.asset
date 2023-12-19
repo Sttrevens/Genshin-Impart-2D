@@ -6,6 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MemoryLaneScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  m_configObjects: {}
+    path: Assets/Scenes/MainMenu.unity
+    guid: fff5ae40e2a69cb4b875be17d5348a8c
+  - enabled: 1
+    path: Assets/Scenes/DemoLevel.unity
+    guid: d7d02135c08d1d141ba58904fef93c7d
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 3b149e04cc218a84a9fafc23ff56247b, type: 2}

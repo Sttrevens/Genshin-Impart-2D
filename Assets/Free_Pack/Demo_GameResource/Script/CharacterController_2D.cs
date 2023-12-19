@@ -98,8 +98,24 @@ public class CharacterController_2D : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
     }
 
+    void OnGUI()
+    {
+        foreach(string joystick in Input.GetJoystickNames())
+        {
+            GUILayout.Label("Joystick: " + joystick);    
+        }
+    }
+
     void Update()
     {
+        string[] joystickNames = Input.GetJoystickNames();
+    for (int i = 0; i < joystickNames.Length; i++)
+    {
+        if (!string.IsNullOrEmpty(joystickNames[i]))
+        {
+            Debug.Log("Joystick " + (i + 1) + ": " + joystickNames[i]);
+        }
+    }
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -311,6 +327,200 @@ public class CharacterController_2D : MonoBehaviour {
         }
     }
 
+   private bool isDpadLeftPressed = false;
+private bool isDpadRightPressed = false;
+private bool isDpadUpPressed = false;
+private bool isDpadDownPressed = false;
+
+void UsePowerI_Joystick()
+{
+    float dPadHorizontal = Input.GetAxis("P1_DPadHorizontal");
+    float dPadVertical = Input.GetAxis("P1_DPadVertical");
+
+    // D-pad Left
+    if (dPadHorizontal < 0)
+    {
+        if (!isDpadLeftPressed)
+        {
+            isDpadLeftPressed = true;
+            ToggleFirePower();
+        }
+    }
+    else if (dPadHorizontal >= 0)
+    {
+        isDpadLeftPressed = false;
+    }
+
+    // D-pad Right
+    if (dPadHorizontal > 0)
+    {
+        if (!isDpadRightPressed)
+        {
+            isDpadRightPressed = true;
+            ToggleWaterPower();
+        }
+    }
+    else if (dPadHorizontal <= 0)
+    {
+        isDpadRightPressed = false;
+    }
+
+    // D-pad Up
+    if (dPadVertical > 0)
+    {
+        if (!isDpadUpPressed)
+        {
+            isDpadUpPressed = true;
+            ToggleGrassPower();
+        }
+    }
+    else if (dPadVertical <= 0)
+    {
+        isDpadUpPressed = false;
+    }
+
+    // D-pad Down
+    if (dPadVertical < 0)
+    {
+        if (!isDpadDownPressed)
+        {
+            isDpadDownPressed = true;
+            ToggleColdPower();
+        }
+    }
+    else if (dPadVertical >= 0)
+    {
+        isDpadDownPressed = false;
+    }
+}
+
+private bool isDpadLeftPressed2 = false;
+private bool isDpadRightPressed2 = false;
+private bool isDpadUpPressed2 = false;
+private bool isDpadDownPressed2 = false;
+
+void UsePowerII_Joystick()
+{
+    float dPadHorizontal = Input.GetAxis("P2_DPadHorizontal");
+    float dPadVertical = Input.GetAxis("P2_DPadVertical");
+
+    // D-pad Left
+    if (dPadHorizontal < 0)
+    {
+        if (!isDpadLeftPressed2)
+        {
+            isDpadLeftPressed2 = true;
+            ToggleFirePower();
+        }
+    }
+    else if (dPadHorizontal >= 0)
+    {
+        isDpadLeftPressed2 = false;
+    }
+
+    // D-pad Right
+    if (dPadHorizontal > 0)
+    {
+        if (!isDpadRightPressed2)
+        {
+            isDpadRightPressed2 = true;
+            ToggleWaterPower();
+        }
+    }
+    else if (dPadHorizontal <= 0)
+    {
+        isDpadRightPressed2 = false;
+    }
+
+    // D-pad Up
+    if (dPadVertical > 0)
+    {
+        if (!isDpadUpPressed2)
+        {
+            isDpadUpPressed2 = true;
+            ToggleGrassPower();
+        }
+    }
+    else if (dPadVertical <= 0)
+    {
+        isDpadUpPressed2 = false;
+    }
+
+    // D-pad Down
+    if (dPadVertical < 0)
+    {
+        if (!isDpadDownPressed2)
+        {
+            isDpadDownPressed2 = true;
+            ToggleColdPower();
+        }
+    }
+    else if (dPadVertical >= 0)
+    {
+        isDpadDownPressed2 = false;
+    }
+}
+
+void ToggleFirePower()
+{
+    if (!isFire)
+    {
+        if (firePower > 0 && !isWater && !isCold)
+        {
+            ActiveFirePower();
+        }
+    }
+    else
+    {
+        DeactiveFirePower();
+    }
+}
+
+void ToggleWaterPower()
+{
+    if (!isWater)
+    {
+        if (waterPower > 0 && !isFire && !isGrass)
+        {
+            ActiveWaterPower();
+        }
+    }
+    else
+    {
+        DeactiveWaterPower();
+    }
+}
+
+void ToggleGrassPower()
+{
+    if (!isGrass)
+    {
+        if (grassPower > 0 && !isWater && !isCold)
+        {
+            ActiveGrassPower();
+        }
+    }
+    else
+    {
+        DeactiveGrassPower();
+    }
+}
+
+void ToggleColdPower()
+{
+    if (!isCold)
+    {
+        if (coldPower > 0 && !isFire && !isGrass)
+        {
+            ActiveColdPower();
+        }
+    }
+    else
+    {
+        DeactiveColdPower();
+    }
+}
+
     IEnumerator DecreaseFirePower()
     {
         while (firePower > 0)
@@ -461,10 +671,14 @@ public class CharacterController_2D : MonoBehaviour {
         if (!isPlayer2)
         {
             PlayerIMove();
+            PlayerIMove_Joystick();
+            UsePowerI_Joystick();
         }
         else
         {
             PlayerIIMove();
+            PlayerIIMove_Joystick();
+            UsePowerII_Joystick();
         }
 
         if (m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") || m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Die")||
@@ -474,10 +688,12 @@ public class CharacterController_2D : MonoBehaviour {
         if (!isPlayer2)
         {
         Move_Fuc();
+        Move_Fuc_Joystick();
         }
         else
         {
             Move_FucII();
+            Move_FucII_Joystick();
         }
     }
 
@@ -504,6 +720,31 @@ public class CharacterController_2D : MonoBehaviour {
         }
     }
 
+    void PlayerIMove_Joystick()
+    {
+        // Check if enough time has passed since the last attack for Attack 1
+        if (Time.time >= lastAttackTime + attackInterval)
+        {
+            // Check for attack key input for Attack 1
+            if (Input.GetAxis("Joystick1Button2") > 0)
+            {
+                PerformAttack1();
+                lastAttackTime = Time.time; // Update the last attack time
+            }
+        }
+
+        // Check if enough time has passed since the last attack for Attack 2
+        if (Time.time >= lastAttackTime + attackInterval * 1.5f)
+        {
+            // Check for attack key input for Attack 2
+            if (Input.GetAxis("Joystick1Button3") > 0)
+            {
+                PerformAttack2();
+                lastAttackTime = Time.time; // Update the last attack time
+            }
+        }
+    }
+
     void PlayerIIMove()
     {
         if (Time.time >= lastAttackTime + attackInterval)
@@ -522,6 +763,31 @@ public class CharacterController_2D : MonoBehaviour {
                     PerformAttack2();
                 lastAttackTime = Time.time;
                 }
+        }
+    }
+
+    void PlayerIIMove_Joystick()
+    {
+        // Check if enough time has passed since the last attack for Attack 1
+        if (Time.time >= lastAttackTime + attackInterval)
+        {
+            // Check for attack key input for Attack 1
+            if (Input.GetAxis("Joystick2Button2") > 0)
+            {
+                PerformAttack1();
+                lastAttackTime = Time.time; // Update the last attack time
+            }
+        }
+
+        // Check if enough time has passed since the last attack for Attack 2
+        if (Time.time >= lastAttackTime + attackInterval * 1.5f)
+        {
+            // Check for attack key input for Attack 2
+            if (Input.GetAxis("Joystick2Button3") > 0)
+            {
+                PerformAttack2();
+                lastAttackTime = Time.time; // Update the last attack time
+            }
         }
     }
 
@@ -702,7 +968,7 @@ public class CharacterController_2D : MonoBehaviour {
     IEnumerator DelayedRaycastVisualization2()
     {
         if (!isDashing)
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.4f);
         else
             yield return new WaitForSeconds(0.4f);
 
@@ -919,6 +1185,49 @@ public class CharacterController_2D : MonoBehaviour {
         m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h1) + Mathf.Abs(v1));
     }
 
+    void Move_Fuc_Joystick()
+    {
+        Vector2 inputForce = new Vector2(0, 0);
+        float dashMultiplier = 1f;
+        isDashing = false;
+
+        // Controller movement input
+        float horizontal = Input.GetAxis("P1_Horizontal");
+        float vertical = Input.GetAxis("P1_Vertical");
+
+        Vector2 moveDirection = new Vector2(horizontal, vertical).normalized;
+        float leftTrigger = Input.GetAxis("P1_TriggerLeft");
+        float rightTrigger = Input.GetAxis("P1_TriggerRight");
+
+        if (Input.GetAxis("Joystick1Button0") > 0 || leftTrigger > 0)
+        {
+            dashMultiplier = dashSpeed;
+            isDashing = true;
+        }
+
+        if (Time.time >= lastAttackTime + 1f)
+        {
+            if (Input.GetAxis("Joystick1Button1") > 0)
+            {
+                Dash(moveDirection);
+                lastAttackTime = Time.time; 
+            }
+        }
+
+        inputForce = moveDirection * MoveSpeed * dashMultiplier;
+
+        // Flip character if necessary based on horizontal input
+        if (horizontal > 0 && !B_FacingRight)
+            Filp();
+        else if (horizontal < 0 && B_FacingRight)
+            Filp();
+
+        ApplyMovement(inputForce * Time.deltaTime);
+
+        // Update Animator MoveSpeed
+        m_Animator.SetFloat("MoveSpeed", Mathf.Abs(horizontal) + Mathf.Abs(vertical));
+    }
+
     void Move_FucII()
     {
         Vector2 inputForce = new Vector2(0, 0);
@@ -971,6 +1280,49 @@ public class CharacterController_2D : MonoBehaviour {
             if (Input.GetKey(KeyCode.I)) v2 = 1f;
             if (Input.GetKey(KeyCode.K)) v2 = -1f;
             m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h2) + Mathf.Abs(v2));
+    }
+
+     void Move_FucII_Joystick()
+    {
+        Vector2 inputForce = new Vector2(0, 0);
+        float dashMultiplier = 1f;
+        isDashing = false;
+
+        // Controller movement input
+        float horizontal = Input.GetAxis("P2_Horizontal");
+        float vertical = Input.GetAxis("P2_Vertical");
+
+        Vector2 moveDirection = new Vector2(horizontal, vertical).normalized;
+        float leftTrigger = Input.GetAxis("P2_TriggerLeft");
+        float rightTrigger = Input.GetAxis("P2_TriggerRight");
+
+        if (Input.GetAxis("Joystick2Button0") > 0 || leftTrigger > 0)
+        {
+            dashMultiplier = dashSpeed;
+            isDashing = true;
+        }
+
+        if (Time.time >= lastAttackTime + 1f)
+        {
+            if (Input.GetAxis("Joystick2Button1") > 0)
+            {
+                Dash(moveDirection);
+                lastAttackTime = Time.time; 
+            }
+        }
+
+        inputForce = moveDirection * MoveSpeed * dashMultiplier;
+
+        // Flip character if necessary based on horizontal input
+        if (horizontal > 0 && !B_FacingRight)
+            Filp();
+        else if (horizontal < 0 && B_FacingRight)
+            Filp();
+
+        ApplyMovement(inputForce * Time.deltaTime);
+
+        // Update Animator MoveSpeed
+        m_Animator.SetFloat("MoveSpeed", Mathf.Abs(horizontal) + Mathf.Abs(vertical));
     }
 
     void ApplyMovement(Vector2 force)

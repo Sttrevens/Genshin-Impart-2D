@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro; // Add this at the top of your script
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -19,10 +20,15 @@ public class PlayerHealth : MonoBehaviour
 
     private Rigidbody2D playerRigidbody;
 
+    public GameObject GGPanel;
+    public TextMeshProUGUI GGText;
+
      private void Start()
     {
         currentHealth = maxHealth;
         UpdateBloodEffectColor();
+
+        GGPanel.SetActive(false);
     }
 
     public void TakeDamage(int damage)
@@ -109,6 +115,11 @@ public class PlayerHealth : MonoBehaviour
         }
 
         characterController.attackDamage = 0;
-        //SceneManager.LoadScene(mainGameScene);
+        GGPanel.SetActive(true);
+
+        if (characterController.isPlayer2)
+            GGText.text = "Player1 Win!";
+        else
+            GGText.text = "Player2 Win!";
     }
 }

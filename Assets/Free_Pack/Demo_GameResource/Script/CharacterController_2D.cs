@@ -1336,11 +1336,10 @@ void ToggleColdPower()
         else
         {
             m_rigidbody.AddForce(force);
-            iceForce = Vector2.zero; // Reset ice force when not on ice
+            iceForce = Vector2.zero;
         }
     }
 
-    // Methods to enter and exit ice
     public void EnterIce()
     {
         isOnIce = true;
@@ -1351,8 +1350,8 @@ void ToggleColdPower()
         isOnIce = false;
     }
 
-    public float dashDistance = 3f; // Distance of the dash
-public float dashDuration = 0.2f; // Duration of the dash
+    public float dashDistance = 3f;
+public float dashDuration = 0.2f;
 
 void Dash(Vector2 direction)
 {
@@ -1372,10 +1371,9 @@ IEnumerator DashCoroutine(Vector2 direction)
         yield return null;
     }
 
-    transform.position = endPosition; // Ensure exact end position
+    transform.position = endPosition;
 }
 
-    // character Filp 
     bool B_Attack = false;
     bool B_FacingRight = true;
 
@@ -1388,13 +1386,4 @@ IEnumerator DashCoroutine(Vector2 direction)
 
         m_tran.localScale = theScale;
     }
-
-
- 
-    //   Sword,Dagger,Spear,Punch,Bow,Gun,Grenade
-
-
-  
-
-  
 }

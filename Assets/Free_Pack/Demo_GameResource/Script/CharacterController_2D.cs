@@ -106,9 +106,24 @@ public class CharacterController_2D : MonoBehaviour {
         }
     }
 
+    int CountConnectedControllers(string[] joystickNames)
+    {
+        int count = 0;
+        foreach (string name in joystickNames)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
     void Update()
     {
-        string[] joystickNames = Input.GetJoystickNames();
+            string[] joystickNames = Input.GetJoystickNames();
+    int connectedControllers = CountConnectedControllers(joystickNames);
+
     for (int i = 0; i < joystickNames.Length; i++)
     {
         if (!string.IsNullOrEmpty(joystickNames[i]))
@@ -666,8 +681,12 @@ void ToggleColdPower()
         grassMeter.SetHealth(grassPower);
         coldMeter.SetHealth(coldPower);
 
-        //spriteOrder_Controller();
+            string[] joystickNames = Input.GetJoystickNames();
+    int connectedControllers = CountConnectedControllers(joystickNames);
 
+        //spriteOrder_Controller();
+        if (!flammableCharacter.isFrozen)
+        {
         if (!isPlayer2)
         {
             PlayerIMove();
@@ -687,13 +706,18 @@ void ToggleColdPower()
 
         if (!isPlayer2)
         {
-        Move_Fuc();
-        Move_Fuc_Joystick();
+        if (connectedControllers == 1)
+            Move_Fuc_Joystick();
+        else
+            Move_Fuc();
         }
         else
         {
-            Move_FucII();
-            Move_FucII_Joystick();
+            if (connectedControllers == 1)
+                Move_FucII_Joystick();
+            else
+                 Move_FucII();
+        }
         }
     }
 
@@ -703,7 +727,7 @@ void ToggleColdPower()
         if (Time.time >= lastAttackTime + attackInterval)
         {
             // Check for attack key input
-            if (Input.GetKeyUp(KeyCode.C))
+            if (Input.GetKey(KeyCode.C))
             {
                 PerformAttack1();
                 lastAttackTime = Time.time; // Update the last attack time
@@ -712,7 +736,7 @@ void ToggleColdPower()
 
         if (Time.time >= lastAttackTime + attackInterval * 1.5f)
         {
-            if (Input.GetKeyUp(KeyCode.V))
+            if (Input.GetKey(KeyCode.V))
             {
                 PerformAttack2();
                 lastAttackTime = Time.time; // Update the last attack time
@@ -749,7 +773,7 @@ void ToggleColdPower()
     {
         if (Time.time >= lastAttackTime + attackInterval)
         {
-            if (Input.GetKeyUp(KeyCode.Semicolon))
+            if (Input.GetKey(KeyCode.Semicolon))
             {
                 PerformAttack1();
                 lastAttackTime = Time.time;
@@ -758,7 +782,7 @@ void ToggleColdPower()
 
         if (Time.time >= lastAttackTime + attackInterval * 1.5f)
         {
-            if (Input.GetKeyUp(KeyCode.Quote))
+            if (Input.GetKey(KeyCode.Quote))
                 {
                     PerformAttack2();
                 lastAttackTime = Time.time;
@@ -1137,7 +1161,7 @@ void ToggleColdPower()
     // character Move Function
     void Move_Fuc()
     {
-        Vector2 inputForce = new Vector2(0, 0);
+       Vector2 inputForce = new Vector2(0, 0);
         float dashMultiplier = 1f;
         isDashing = false;
 
@@ -1180,9 +1204,13 @@ void ToggleColdPower()
         ApplyMovement(inputForce * Time.deltaTime);
 
         // Update Animator MoveSpeed
-        float h1 = Input.GetAxis("Horizontal");
-        float v1 = Input.GetAxis("Vertical");
-        m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h1) + Mathf.Abs(v1));
+         float h1 = 0f;
+            float v1 = 0f;
+            if (Input.GetKey(KeyCode.A)) h1 = -1f;
+            if (Input.GetKey(KeyCode.D)) h1 = 1f;
+            if (Input.GetKey(KeyCode.W)) v1 = 1f;
+            if (Input.GetKey(KeyCode.S)) v1 = -1f;
+            m_Animator.SetFloat("MoveSpeed", Mathf.Abs(h1) + Mathf.Abs(v1));
     }
 
     void Move_Fuc_Joystick()

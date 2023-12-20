@@ -15,7 +15,7 @@ public class FlammableCharacter : MonoBehaviour
     public GameObject firePrefab;
 
     private bool isWet = false;
-    private bool isFrozen = false;
+    public bool isFrozen = false;
     private bool isBurning = false;
 
     private string playerTag;

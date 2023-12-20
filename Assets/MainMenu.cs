@@ -14,11 +14,14 @@ public class MainMenu : MonoBehaviour
     }
 
     // Function to show the instruction panel
-    public void ShowInstructions()
+    public void ShoworHideInstructions()
     {
         if (instructionsPanel != null)
         {
-            instructionsPanel.SetActive(true);
+            if (!instructionsPanel.activeInHierarchy)
+                instructionsPanel.SetActive(true);
+            else
+                instructionsPanel.SetActive(false);
         }
     }
 

@@ -1,5 +1,6 @@
 using UnityEngine;
-using UnityEditor; // This is required for editor scripting
+#if UNITY_EDITOR
+using UnityEditor;
 
 [CustomEditor(typeof(MapGenerator))]
 public class MapGeneratorEditor : Editor
@@ -16,3 +17,5 @@ public class MapGeneratorEditor : Editor
         }
     }
 }
+
+#endif

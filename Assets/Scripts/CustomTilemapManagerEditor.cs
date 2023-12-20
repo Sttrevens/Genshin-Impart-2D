@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+// Editor-specific code here
 
 [CustomEditor(typeof(CustomTilemapManager))]
 public class CustomTilemapManagerEditor : Editor
@@ -90,3 +92,5 @@ public class CustomTilemapManagerEditor : Editor
         return new Vector3Int(x, y, 0);
     }
 }
+
+#endif

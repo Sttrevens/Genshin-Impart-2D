@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0052510577aaf964aa4e038a72b40cd8, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 6790858419111397827, guid: 551275e1ced21664c9e540ff02209d5f, type: 3}
+  tileAssets:
+  - {fileID: 21300000, guid: 770fe947d1f97e942855e014cf644307, type: 3}
+  - {fileID: 21300000, guid: 189018b9bad320d4882f7b1010d12a55, type: 3}
+  noiseThreshold: 0.5

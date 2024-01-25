@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93429d77f361dac4995ed630456f7c3f, type: 3}
+  m_Name: Flammable
+  m_EditorClassIdentifier: 
+  objectPrefabs:
+  - {fileID: 6602110379005034206, guid: dc4eb0d5e94dba24883d26e325b4bdfb, type: 3}
+  - {fileID: 1186068947894754784, guid: 0a9970bd12649d644b6641e38a2b6483, type: 3}
+  - {fileID: 1838256655178428030, guid: 3ae8bc98704d9d14981469814492e72e, type: 3}
+  - {fileID: 7479141618919368876, guid: 620634d4b0fa68c47aafc2c25a1f7f7a, type: 3}
+  spawnProbability: 0.5
